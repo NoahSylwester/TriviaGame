@@ -174,7 +174,7 @@ function incorrectAnswer() {
 
 function endGame() {
   fadeout()
-  let score = answersCorrect - answersIncorrect;
+  let score = answersCorrect - answersIncorrect; // define ranking based on score
   if (score === 10) {
     ranking = "Ultimate Grandmaster";
   }
@@ -191,7 +191,7 @@ function endGame() {
     ranking = "Plucky Ducky";
   }
   else if (score === 2) {
-    ranking = "Quizee Apprentice";
+    ranking = "Quizzee Apprentice";
   }
   else if (score === 1) {
     ranking = "Question Baby";
@@ -235,6 +235,7 @@ function endGame() {
       <div class="gif">
         GIF
       </div>
+      <button class="option reset">Play again?</button>
       `
       );
       $.ajax({
@@ -245,7 +246,30 @@ function endGame() {
       });
       fadein();
   }, 500)
-}
+};
+
+function gameReset() {
+  $('.question-display').empty().html(
+    `
+    <h1 class="title">
+      TRIVIA GAME
+    </h1>
+    <p>What category of question would you like?</p>
+    <button data-number="9" class="option category">General</button>
+    <button data-number="20" class="option category">Mythology</button>
+    <button data-number="18" class="option category">Computers</button>
+    <button data-number="12" class="option category">Music</button>
+    <button data-number="15" class="option category">Video Games</button>
+    <button data-number="17" class="option category">Science and Nature</button>
+    <button data-number="31" class="option category">Anime and Manga</button>
+    `
+  );
+  answersCorrect = 0;
+  answersIncorrect = 0;
+  unanswered = 0;
+  timeRemaining = 20;
+  currentQuestionIndex = 0;
+};
 
 
 $('.question-display').on("click", ".category", function() {
@@ -273,4 +297,14 @@ $('.question-display').on("click", ".answer", function() {
   else {
     incorrectAnswer();
   }
+});
+
+$('.question-display').on("click", ".reset", function() {
+  fadeout();
+  setTimeout(() => {
+    gameReset();
+    setTimeout(() => {
+      fadein()
+    }, 500);
+  }, 500);
 });

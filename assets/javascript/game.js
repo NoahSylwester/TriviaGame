@@ -2,7 +2,7 @@
 var answersCorrect = 0;
 var answersIncorrect = 0;
 var answersUnanswered = 0;
-var timeRemaining = 30;
+var timeRemaining = 20;
 
 // establish all questions, and current question index
 var currentQuestionIndex = 0;
@@ -17,8 +17,27 @@ var answer4;
 // set interval for timer
 var timerInterval;
 
+// function taken from https://gomakethings.com/decoding-html-entities-with-vanilla-javascript/
+// author: Chris Ferdinandi
+// needed for comparing some strings from trivia API
+var decodeHTML = function (html) {
+	var txt = document.createElement('textarea');
+	txt.innerHTML = html;
+	return txt.value;
+};
+
 // function definitions
+function fadeout() {
+  $('main').removeClass('fadein').addClass('fadeout');
+}
+
+function fadein() {
+  $('main').removeClass('fadeout').addClass('fadein');
+}
+
+
 function nextQuestion() {
+  timeRemaining = 20;
   answers = [ // stores all answers in an array
     questions.results[currentQuestionIndex].correct_answer,
     questions.results[currentQuestionIndex].incorrect_answers[0],
@@ -39,6 +58,9 @@ function nextQuestion() {
   
   $('.question-display').empty().html(
   `
+  <h3>
+    Question ${currentQuestionIndex + 1}
+  </h3>
   <h4 class="time-display">
     Time remaining: ${timeRemaining}
   </h4>
@@ -62,11 +84,14 @@ function nextQuestion() {
   `
   );
   currentQuestionIndex++;
-  timeRemaining = 30;
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     timeRemaining--;
     $('.time-display').text(`Time remaining: ${timeRemaining}`);
+    if (timeRemaining === 0) {
+      clearInterval(timerInterval);
+      incorrectAnswer();
+    }
   }, 1000);
 }
 
@@ -74,7 +99,6 @@ function correctAnswer() {
   answersCorrect++;
   $('.question-display').empty().html(
     `
-    <br />
     <h2 class="right">
       CORRECT!
     </h2>
@@ -96,13 +120,19 @@ function correctAnswer() {
         $('.gif').html(`<img style="height: 300px;" src="https://media2.giphy.com/media/kigLtfDrV3K9N0wYCO/giphy.gif?cid=790b7611573e964e2eb2205928343b3f7ff1065e543a65fa&rid=giphy.gif">`);
       }
     });
+    setTimeout(() => {
+      fadeout();
+      setTimeout(() => {
+        nextQuestion();
+        fadein();
+      }, 600);
+    }, 5000);
 }
 
 function incorrectAnswer() {
   answersIncorrect++;
   $('.question-display').empty().html(
     `
-    <br />
     <h2 class="wrong">
       INCORRECT! <br />
       The correct answer was ${questions.results[currentQuestionIndex - 1].correct_answer}.
@@ -125,13 +155,20 @@ function incorrectAnswer() {
         $('.gif').html(`<img style="height: 300px;" src="https://media2.giphy.com/media/kigLtfDrV3K9N0wYCO/giphy.gif?cid=790b7611573e964e2eb2205928343b3f7ff1065e543a65fa&rid=giphy.gif">`);
       }
     });
+    setTimeout(() => {
+      fadeout();
+      setTimeout(() => {
+        nextQuestion();
+        fadein();
+      }, 600);
+    }, 5000);
 }
 
 
 
 $('.question-display').on("click", ".category", function() {
   categoryId = $(this).data('number');
-  $('main').addClass('fadeout');
+  fadeout();
   $.ajax({
     url: `https://opentdb.com/api.php?amount=10&category=${categoryId}&difficulty=easy&type=multiple`,
     method: "GET"
@@ -140,15 +177,15 @@ $('.question-display').on("click", ".category", function() {
     questions = response;
     setTimeout(() => {
       nextQuestion();
-      $('main').removeClass('fadeout').addClass('fadein');
+      fadein();
     }, 500);
   });
 });
 
 $('.question-display').on("click", ".answer", function() {
   // checks answer
-  console.log($(this).text().trim(), questions.results[currentQuestionIndex - 1].correct_answer.trim(), $(this).text() === questions.results[currentQuestionIndex - 1].correct_answer);
-  if ($(this).text().trim() === questions.results[currentQuestionIndex - 1].correct_answer.trim()) {
+  console.log($(this).text().trim(), questions.results[currentQuestionIndex - 1].correct_answer.trim(), $(this).text().trim() === questions.results[currentQuestionIndex - 1].correct_answer.trim());
+  if (decodeHTML($(this).text().trim()) === decodeHTML(questions.results[currentQuestionIndex - 1].correct_answer.trim())) {
     correctAnswer();
   }
   else {

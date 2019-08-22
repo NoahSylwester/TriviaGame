@@ -117,12 +117,12 @@ function correctAnswer() {
     `
     );
     $.ajax({
-      url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${questions.results[currentQuestionIndex - 1].correct_answer}&limit=1`,
+      url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${questions.results[currentQuestionIndex - 1].correct_answer}&limit=4`,
       method: "GET"
     }).then((response) => {
       console.log(response)
       if (typeof(response.data[0]) !== 'undefined') {
-        $('.gif').html(`<img style="height: 300px;" src="${response.data[0].images.downsized.url}">`);
+        $('.gif').html(`<img style="height: 300px;" src="${response.data[Math.floor(Math.random() * response.data.length)].images.downsized.url}">`);
       }
       else {
         $('.gif').html(`<img style="height: 300px;" src="https://media2.giphy.com/media/kigLtfDrV3K9N0wYCO/giphy.gif?cid=790b7611573e964e2eb2205928343b3f7ff1065e543a65fa&rid=giphy.gif">`);
@@ -152,12 +152,12 @@ function incorrectAnswer() {
     `
     );
     $.ajax({
-      url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${questions.results[currentQuestionIndex - 1].correct_answer}&limit=1`,
+      url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${questions.results[currentQuestionIndex - 1].correct_answer}&limit=4`,
       method: "GET"
     }).then((response) => {
       console.log(response)
       if (typeof(response.data[0]) !== 'undefined') {
-        $('.gif').html(`<img style="height: 300px;" src="${response.data[0].images.downsized.url}">`);
+        $('.gif').html(`<img style="height: 300px;" src="${response.data[Math.floor(Math.random() * response.data.length)].images.downsized.url}">`);
       }
       else {
         $('.gif').html(`<img style="height: 300px;" src="https://media2.giphy.com/media/kigLtfDrV3K9N0wYCO/giphy.gif?cid=790b7611573e964e2eb2205928343b3f7ff1065e543a65fa&rid=giphy.gif">`);

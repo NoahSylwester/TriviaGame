@@ -8,12 +8,35 @@ var timeRemaining = 30;
 var currentQuestionIndex = 0;
 var categoryId;
 var questions;
+var answers;
+var answer1;
+var answer2;
+var answer3;
+var answer4;
 
 // set interval for timer
 var timerInterval;
 
 // function definitions
 function nextQuestion() {
+  answers = [ // stores all answers in an array
+    questions.results[currentQuestionIndex].correct_answer,
+    questions.results[currentQuestionIndex].incorrect_answers[0],
+    questions.results[currentQuestionIndex].incorrect_answers[1],
+    questions.results[currentQuestionIndex].incorrect_answers[2]
+  ]
+  // create answers, filling randomly, removes options to fill as it does
+  answer1 = answers[Math.floor(Math.random() * answers.length)];
+  answers.splice(answers.indexOf(answer1), 1);
+
+  answer2 = answers[Math.floor(Math.random() * answers.length)];
+  answers.splice(answers.indexOf(answer2), 1);
+  
+  answer3 = answers[Math.floor(Math.random() * answers.length)];
+  answers.splice(answers.indexOf(answer3), 1);
+  
+  answer4 = answers[Math.floor(Math.random() * answers.length)];
+  
   $('.question-display').empty().html(
   `
   <h4 class="time-display">
@@ -25,16 +48,16 @@ function nextQuestion() {
   </div>
   <br />
   <button class="option answer">
-    ${questions.results[currentQuestionIndex].correct_answer}
+    ${answer1}
   </button>
   <button class="option answer">
-    ${questions.results[currentQuestionIndex].incorrect_answers[0]}
+    ${answer2}
   </button>
   <button class="option answer">
-    ${questions.results[currentQuestionIndex].incorrect_answers[1]}
+    ${answer3}
   </button>
   <button class="option answer">
-    ${questions.results[currentQuestionIndex].incorrect_answers[2]}
+    ${answer4}
   </button>
   `
   );
@@ -81,14 +104,27 @@ function incorrectAnswer() {
     `
     <br />
     <h2 class="wrong">
-      INCORRECT!
+      INCORRECT! <br />
+      The correct answer was ${questions.results[currentQuestionIndex - 1].correct_answer}.
     </h2>
     <br />
-    <div>
+    <div class="gif">
       GIF
     </div>
     `
     );
+    $.ajax({
+      url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${questions.results[currentQuestionIndex - 1].correct_answer}&limit=1`,
+      method: "GET"
+    }).then((response) => {
+      console.log(response)
+      if (typeof(response.data[0]) !== 'undefined') {
+        $('.gif').html(`<img style="height: 300px;" src="${response.data[0].images.downsized.url}">`);
+      }
+      else {
+        $('.gif').html(`<img style="height: 300px;" src="https://media2.giphy.com/media/kigLtfDrV3K9N0wYCO/giphy.gif?cid=790b7611573e964e2eb2205928343b3f7ff1065e543a65fa&rid=giphy.gif">`);
+      }
+    });
 }
 
 
@@ -110,10 +146,12 @@ $('.question-display').on("click", ".category", function() {
 });
 
 $('.question-display').on("click", ".answer", function() {
-  if (true) {
+  // checks answer
+  console.log($(this).text().trim(), questions.results[currentQuestionIndex - 1].correct_answer.trim(), $(this).text() === questions.results[currentQuestionIndex - 1].correct_answer);
+  if ($(this).text().trim() === questions.results[currentQuestionIndex - 1].correct_answer.trim()) {
     correctAnswer();
   }
-  else if (false) {
+  else {
     incorrectAnswer();
   }
 });

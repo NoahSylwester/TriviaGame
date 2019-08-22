@@ -9,9 +9,11 @@ var currentQuestionIndex = 0;
 var categoryId;
 var questions;
 
+// set interval for timer
+var timerInterval;
+
 // function definitions
 function nextQuestion() {
-  timeRemaining = 30;
   $('.question-display').empty().html(
   `
   <h4 class="time-display">
@@ -37,6 +39,12 @@ function nextQuestion() {
   `
   );
   currentQuestionIndex++;
+  timeRemaining = 30;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeRemaining--;
+    $('.time-display').text(`Time remaining: ${timeRemaining}`);
+  }, 1000);
 }
 
 function correctAnswer() {
@@ -46,6 +54,7 @@ function correctAnswer() {
 function incorrectAnswer() {
   answersIncorrect++;
 }
+
 
 
 $('.question-display').on("click", ".category", function() {

@@ -14,9 +14,9 @@ function nextQuestion() {
   timeRemaining = 30;
   $('.question-display').empty().html(
   `
-  <h2 class="time-display">
+  <h4 class="time-display">
     Time remaining: ${timeRemaining}
-  </h2>
+  </h4>
   <br />
   <div>
     ${questions.results[currentQuestionIndex].question}
@@ -35,9 +35,17 @@ function nextQuestion() {
     ${questions.results[currentQuestionIndex].incorrect_answers[2]}
   </button>
   `
-  )
+  );
+  currentQuestionIndex++;
 }
 
+function correctAnswer() {
+  answersCorrect++;
+}
+
+function incorrectAnswer() {
+  answersIncorrect++;
+}
 
 
 $('.question-display').on("click", ".category", function() {

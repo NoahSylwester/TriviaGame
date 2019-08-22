@@ -1,0 +1,35 @@
+body {
+  background-image: url("../images/bkgrd.jpg");
+  background-size: 100%;
+  margin: 75px;
+}
+
+main {
+  background: rgba(202, 202, 202, 0.623);
+  text-align: center;
+  padding: 50px;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.question-display {
+  text-align: center;
+}
+
+.category {
+  border-radius: 5px;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px auto;
+}
+
+.category:hover {
+  background: rgba(89, 160, 253, 0.637);
+}

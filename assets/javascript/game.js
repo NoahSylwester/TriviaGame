@@ -1,7 +1,7 @@
 // keep track of total score and time remaining
 var answersCorrect = 0;
 var answersIncorrect = 0;
-var answersUnanswered = 0;
+var unanswered = 0;
 var timeRemaining = 20;
 
 // establish all questions, and current question index
@@ -13,6 +13,9 @@ var answer1;
 var answer2;
 var answer3;
 var answer4;
+
+// ranking for final score
+var ranking = "";
 
 // set interval for timer
 var timerInterval;
@@ -37,6 +40,10 @@ function fadein() {
 
 
 function nextQuestion() {
+  if (currentQuestionIndex === 10) {
+    clearInterval(timerInterval);
+    endGame();
+  }
   timeRemaining = 20;
   answers = [ // stores all answers in an array
     questions.results[currentQuestionIndex].correct_answer,
@@ -90,6 +97,7 @@ function nextQuestion() {
     $('.time-display').text(`Time remaining: ${timeRemaining}`);
     if (timeRemaining === 0) {
       clearInterval(timerInterval);
+      unanswered++;
       incorrectAnswer();
     }
   }, 1000);
@@ -164,6 +172,80 @@ function incorrectAnswer() {
     }, 5000);
 }
 
+function endGame() {
+  fadeout()
+  let score = answersCorrect - answersIncorrect;
+  if (score === 10) {
+    ranking = "Ultimate Grandmaster";
+  }
+  else if (score === 9 || score === 8) {
+    ranking = "Knowledge Connoisseur";
+  }
+  else if (score === 7 || score === 6) {
+    ranking = "Trivial Journeyman";
+  }
+  else if (score === 5 || score === 4) {
+    ranking = "Answer Dancer";
+  }
+  else if (score === 3) {
+    ranking = "Plucky Ducky";
+  }
+  else if (score === 2) {
+    ranking = "Quizee Apprentice";
+  }
+  else if (score === 1) {
+    ranking = "Question Baby";
+  }
+  else if (score === 0) {
+    ranking = "Sinker Thinker";
+  }
+  else if (score === -1) {
+    ranking = "Find Mind";
+  }
+  else if (score === -2) {
+    ranking = "Try again? /:";
+  }
+  else if (score === -3 || score === -4) {
+    ranking = "Needs Work, Champ.";
+  }
+  else if (score === -5 || score === -6) {
+    ranking = "Chump.";
+  }
+  else if (score === -7 || score === -8 || score === -9) {
+    ranking = "Yikes...";
+  }
+  else if (score === -10) {
+    ranking = "Everything was wrong. Every single one.";
+  }
+  setTimeout(() => {
+    $('.question-display').empty().html(
+      `
+      <h3>
+        Final score
+      </h3>
+      <h4>
+        Your ranking: <strong class="ranking">${ranking}</strong>
+      </h4>
+      <p>
+        Correct Answers: ${answersCorrect}</p>
+      <p>
+        Incorrect Answers: ${answersIncorrect}</p>
+      <p>
+        Unanswered: ${unanswered}</p>
+      <div class="gif">
+        GIF
+      </div>
+      `
+      );
+      $.ajax({
+        url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${ranking}&limit=1`,
+        method: "GET"
+      }).then((response) => {
+          $('.gif').html(`<img style="height: 300px;" src="${response.data[0].images.downsized.url}">`);
+      });
+      fadein();
+  }, 500)
+}
 
 
 $('.question-display').on("click", ".category", function() {

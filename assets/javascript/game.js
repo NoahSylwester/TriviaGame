@@ -49,10 +49,42 @@ function nextQuestion() {
 
 function correctAnswer() {
   answersCorrect++;
+  $('.question-display').empty().html(
+    `
+    <br />
+    <h2 class="right">
+      CORRECT!
+    </h2>
+    <br />
+    <div class="gif">
+      GIF
+    </div>
+    `
+    );
+    $.ajax({
+      url: `https://api.giphy.com/v1/gifs/search?api_key=nQtvdLS8RFmfo0CBFedERtrhHTq8NXas&q=${questions.results[currentQuestionIndex - 1].correct_answer}&limit=1`,
+      method: "GET"
+    }).then((response) => {
+      console.log(questions.results[currentQuestionIndex - 1].correct_answer);
+      console.log(response);
+      $('.gif').html(`<img src="${response.data[0].images.downsized.url}">`);
+    });
 }
 
 function incorrectAnswer() {
   answersIncorrect++;
+  $('.question-display').empty().html(
+    `
+    <br />
+    <h2 class="wrong">
+      INCORRECT!
+    </h2>
+    <br />
+    <div>
+      GIF
+    </div>
+    `
+    );
 }
 
 
@@ -71,4 +103,13 @@ $('.question-display').on("click", ".category", function() {
       $('main').removeClass('fadeout').addClass('fadein');
     }, 500);
   });
+});
+
+$('.question-display').on("click", ".answer", function() {
+  if (true) {
+    correctAnswer();
+  }
+  else if (false) {
+    incorrectAnswer();
+  }
 });

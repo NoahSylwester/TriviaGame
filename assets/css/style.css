@@ -34,6 +34,11 @@ main {
   background: rgba(95, 177, 253, 0.637);
 }
 
+.option:active {
+  background: rgba(95, 182, 253, 0.705);
+  color: whitesmoke;
+}
+
 .category {
   float: none;
 }

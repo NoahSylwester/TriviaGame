@@ -104,6 +104,7 @@ function nextQuestion() {
 }
 
 function correctAnswer() {
+  clearInterval(timerInterval);
   answersCorrect++;
   $('.question-display').empty().html(
     `
@@ -138,6 +139,7 @@ function correctAnswer() {
 }
 
 function incorrectAnswer() {
+  clearInterval(timerInterval);
   answersIncorrect++;
   $('.question-display').empty().html(
     `
